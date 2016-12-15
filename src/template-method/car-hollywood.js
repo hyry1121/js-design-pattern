@@ -1,66 +1,72 @@
-function generateCar( carCfg ) {
-	function start() {
-		console.log( `${ this.brand } 启动` )
+// 设置抽象方法
+function MakeCar( carCfg ) {
+	function start( brand ) {
+		console.log( `${ brand } 启动` )
 	}
 
 	const setGPS = carCfg.setGPS || function() {
 		throw new Error( '具体子类必须重写 setGPS 方法' )
 	}
 
-	const hasSkylight = carCfg.hasSkylight || false
+	const hasSkylight = carCfg.hasSkylight === true ? true : false
 
-	function openSkylight() {
-		console.log( `${ this.brand } 打开天窗` )
+	function openSkylight( brand ) {
+		console.log( `${ brand } 打开天窗` )
 	}
 
 	const drive = carCfg.drive || function() {
 		throw new Error( '具体子类必须重写 drive 方法' )
 	}
 
-	function stop() {
-		console.log( `${ this.brand } 停车` )
+	function stop( brand ) {
+		console.log( `${ brand } 停车` )
 	}
 
-	class Tmp {
+	// 返回抽象父类
+	class Car {
 		constructor( brand ) {
 			this.brand = brand
 		}
-
 		init() {
-			start.call( this )
-			setGPS.call( this )
+			const brand = this.brand
+			start( brand )
+			setGPS( brand )
 			// 如果钩子返回 true，则打开天窗
 			if( hasSkylight ) {
-				openSkylight.call( this )
+				openSkylight( brand )
 			}
-			drive.call( this )
-			stop.call( this )
+			drive( brand )
+			stop( brand )
 		}
 	}
 
-	return Tmp
+	return Car
 }
 
-const BmwCar = generateCar({
-	setGPS() {
-		console.log( `${ this.brand } 设置GPS` )
+// 重写抽象方法
+const BmwCar = MakeCar({
+	setGPS( brand ) {
+		console.log( `${ brand } 设置GPS` )
 	},
 	hasSkylight: true,
-	drive() {
-		console.log( `${ this.brand } 正在飙车` )
+	drive( brand ) {
+		console.log( `${ brand } 正在飙车` )
 	}
 })
 
-const AudiCar = generateCar({
-	setGPS() {
-		console.log( `${ this.brand } 设置GPS` )
+// 重写抽象方法
+const AudiCar = MakeCar({
+	setGPS( brand ) {
+		console.log( `${ brand } 设置GPS` )
 	},
-	drive() {
-		console.log( `${ this.brand } 正在慢慢开` )
+	drive( brand ) {
+		console.log( `${ brand } 正在慢慢开` )
 	}
 })
 
+// new具体子类
 const bmw = new BmwCar( 'bmw' )
 const audi = new AudiCar( 'audi' )
+
 bmw.init()
 audi.init()

@@ -1,3 +1,10 @@
+/**
+ * 求职者去到职业市场找工作，不用关心招聘的公司
+ * 只需将回调函数给到职业市场，即向市场订阅相关职位
+ * 职业市场收到招聘公司的信息之后，符合求职者的要求就推送，执行回调函数
+ */
+
+
 const _ = require( './../utils' )
 /**
  * 人才市场
@@ -10,7 +17,7 @@ const jobMarket = {
 	// 传入的 cb 为具名函数，如果传入的是匿名函数，无法移除。如果要实现，参照 jQuery 中设置标识符
 	listen( type, cb ) {
 		const hasFunctionName = !!_.getFunctionName( cb )
-		_.assert( hasFunctionName, 'listen方法需要传入的是具名函数，匿名函数无法取消订阅' )
+		_.assert( hasFunctionName, 'listen 方法需要传入的是具名函数，匿名函数无法取消订阅' )
 		// 如果还没有订阅过该工作类型，就创建一个列表
 		if( !this.clientList[ type ] ) {
 			this.clientList[ type ] = []
@@ -40,6 +47,7 @@ const jobMarket = {
 		// 如果不传入具体的回调函数名，则意图取消该类型下的所有回调函数
 		if( !cb ) {
 			delete this.clientList[ type ]
+			return
 		}
 
 		// 倒序遍历，方便使用 splice
@@ -72,6 +80,8 @@ function xiaoliang( condition ) {
 jobMarket.listen( '前端', xiaoming )
 jobMarket.listen( '前端', xiaohua )
 jobMarket.listen( '后端', xiaoliang )
+
+jobMarket.remove( '前端' )
 
 jobMarket.trigger( '前端', { price: 9000 } )
 jobMarket.trigger( '后端', { price: 2000 } )
